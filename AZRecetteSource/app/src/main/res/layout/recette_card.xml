@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
+    // Remove LinearLayout et mettre la CardView en Root
     <android.support.v7.widget.CardView
         android:id="@+id/RecetteCardView"
         android:layout_width="match_parent"
