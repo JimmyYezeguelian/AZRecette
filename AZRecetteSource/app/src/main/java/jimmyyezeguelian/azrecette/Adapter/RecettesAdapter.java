@@ -3,8 +3,12 @@ package jimmyyezeguelian.azrecette.Adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -75,10 +79,45 @@ public class RecettesAdapter extends RecyclerView.Adapter<RecettesAdapter.ViewHo
     public void onBindViewHolder(RecettesAdapter.ViewHolder holder, int position) {
         Recette recette = recetteList.get(position);
         CropSquareTransformation transformation = new CropSquareTransformation();
-        System.out.println(recetteList.size() + " pos: " + position);
+        String prepTimeString = recette.getTempsDePreparation();
+        prepTimeString = prepTimeString.concat(" min.");
+        String cookTimeString = recette.getTempsDeCuisson();
+        cookTimeString = cookTimeString.concat(" min.");
+
+        // Set content
         holder.title.setText(recette.getTitre() == null ? "Pas de titre" : recette.getTitre());
-        holder.preptime.setText(recette.getTempsDePreparation() + " min.");
-        holder.cooktime.setText(recette.getTempsDeCuisson() + " min.");
+
+        // Preparation & Cuisson
+        int defaultColor = holder.preptime.getCurrentTextColor();
+        //
+        Spannable beforePrep = new SpannableString("Préparation: ");
+        beforePrep.setSpan(new ForegroundColorSpan(defaultColor), 0, beforePrep.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        holder.preptime.setText(beforePrep);
+
+        Spannable prep = new SpannableString(prepTimeString);
+        prep.setSpan(new ForegroundColorSpan(Color.BLACK), 0, prep.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        holder.preptime.append(prep);
+
+        //
+        Spannable beforeCook = new SpannableString("Cuisson: ");
+        beforeCook.setSpan(new ForegroundColorSpan(defaultColor), 0, beforeCook.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        holder.cooktime.setText(beforeCook);
+
+        Spannable cook = new SpannableString(cookTimeString);
+        cook.setSpan(new ForegroundColorSpan(Color.BLACK), 0, cook.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        holder.cooktime.append(cook);
+
+        // Type
+        String typeString = recette.getType().replace("[", "").replace("]", "").replace(",", " -");
+        Spannable beforeType = new SpannableString("Type: ");
+        beforeType.setSpan(new ForegroundColorSpan(defaultColor), 0, beforeType.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        holder.difficulte.setText(beforeType);
+
+        Spannable type = new SpannableString(typeString);
+        type.setSpan(new ForegroundColorSpan(Color.GREEN), 0, type.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        holder.difficulte.append(type);
+
+
         if (!recette.getImage().isEmpty()) {
             Picasso.with(context).load(recette.getImage()).transform(transformation).into(holder.thumbnail);
             Glide.with(context).load(recette.getImage()).into(holder.thumbnail);
@@ -86,6 +125,12 @@ public class RecettesAdapter extends RecyclerView.Adapter<RecettesAdapter.ViewHo
             Picasso.with(context).load(R.mipmap.ic_logo).transform(transformation).into(holder.thumbnail);
             Glide.with(context).load(R.mipmap.ic_logo).into(holder.thumbnail);
         }
+
+        // Set UI style
+        holder.title.setTextColor(Color.BLUE);
+        holder.preptime.setTextColor(Color.BLACK);
+        holder.cooktime.setTextColor(Color.BLACK);
+        holder.difficulte.setTextColor(Color.GRAY);
     }
 
 
